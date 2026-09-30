@@ -1,0 +1,182 @@
+困ったらhttp://127.0.0.1:8000/docs#/を調べること！
+# WebForge AI Desktop — 実装順序メモ
+
+## 現在地
+
+`generator/` の Python 層が完成済み。
+
+```
+font_engine/
+├── generator/        ✅ 完成
+│   ├── curve_engine.py
+│   ├── stroke_engine.py
+│   ├── metrics_engine.py
+│   ├── kerning_engine.py
+│   ├── glyph_builder.py
+│   ├── glyph_modifier.py
+│   ├── font_assembler.py
+│   └── __init__.py
+└── pipeline/         🔲 未着手
+```
+
+---
+
+## フェーズ1 — バックエンド完成（Python）
+
+### ステップ1: スモークテスト
+**ファイル:** `tests/test_generator_smoke.py`
+
+作った generator が実際に動くか確認する。
+fonttools がなくてもロジックのテストだけ先にやる。
+
+```python
+# 確認すること
+# - GlyphBuilder.letter_O() が GlyphData を返せるか
+# - KerningEngine.latin_preset() でペアが展開されるか
+# - FontAssembler に add_glyph して build_ttf() が bytes を返すか
+```
+
+---
+
+### ステップ2: pipeline/ を整備
+**ファイル（既存を移植・整理）:**
+
+```
+pipeline/
+├── __init__.py
+├── font_loader.py        ← TTF/OTF ファイルを読み込む
+├── variable_adjuster.py  ← Variable Font の軸を動かす
+├── subset_exporter.py    ← pyftsubset でサブセット化
+├── woff2_converter.py    ← woff2 変換・Brotli 圧縮
+└── preview_renderer.py   ← プレビュー画像生成
+```
+
+ポイント: `font_loader.py` が読んだグリフを `GlyphModifier` に渡せる形にする（generator との接続点）。
+
+---
+
+### ステップ3: FastAPI エンドポイント
+**ファイル:** `api/routes_font_generator.py`
+
+```python
+POST /fonts/generate      ← FontAssembler を呼び出す
+POST /fonts/subset        ← pipeline/subset_exporter を呼び出す
+POST /fonts/convert       ← pipeline/woff2_converter を呼び出す
+GET  /fonts/preview/{id}  ← pipeline/preview_renderer を呼び出す
+```
+
+スキーマは `schemas/font_schema.py` に Pydantic モデルとして定義する。
+
+---
+
+## フェーズ2 — Electron IPC 接続
+
+### ステップ4: IPC ハンドラー
+**ファイル:** `electron/ipc/font.ipc.ts`
+
+```typescript
+// 追加するチャンネル
+'font:generate'   → POST /fonts/generate
+'font:subset'     → POST /fonts/subset
+'font:convert'    → POST /fonts/convert
+'font:preview'    → GET  /fonts/preview/:id
+```
+
+**ファイル:** `shared/constants/ipcChannels.ts`
+チャンネル名を定数として追加する。
+
+---
+
+### ステップ5: 型定義の更新
+**ファイル:** `shared/types/font.ts`
+
+generator で新しく作ったデータ型（FontMetrics, GlyphMetrics など）に対応する TypeScript 型を追加する。
+
+---
+
+## フェーズ3 — React UI
+
+### ステップ6: MetricsPanel.tsx
+**ファイル:** `frontend/src/components/font/MetricsPanel.tsx`
+
+`metrics_engine.py` の FontMetrics を編集する UI パネル。
+ascender / descender / cap_height / x_height などのスライダー。
+
+シンプルな数値入力から作り始める。
+
+---
+
+### ステップ7: StrokeEditor.tsx
+**ファイル:** `frontend/src/components/font/StrokeEditor.tsx`
+
+`stroke_engine.py` のパラメーターを操作する UI。
+- ストローク太さスライダー
+- キャップスタイル選択（Butt / Round / Square）
+- ジョインスタイル選択
+
+Canvas でリアルタイムプレビューを出せると理想。
+
+---
+
+### ステップ8: GlyphEditor.tsx の本実装
+**ファイル:** `frontend/src/components/font/GlyphEditor.tsx`
+
+`glyph_modifier.py` の操作（translate / scale / flip）を UI から叩けるようにする。
+StrokeEditor と MetricsPanel をここに統合する形。
+
+---
+
+### ステップ9: FontStudio ページの更新
+**ファイル:** `frontend/src/pages/FontStudio.tsx`
+
+フェーズ1〜3で作ったコンポーネントをまとめて画面として繋ぐ。
+既存の FontCard / FontPreview / VariableAxesSlider に加えて
+MetricsPanel / StrokeEditor / GlyphEditor を組み込む。
+
+---
+
+## フェーズ4 — AI 連携（最後）
+
+### ステップ10: AI → generator 連携
+**ファイル:** `services/llm_engine/style_instructor.py`
+
+自然言語の指示（「もっと太く」「もっと丸く」）を
+`StrokeEngine` や `MetricsEngine` のパラメーター変更に変換するロジック。
+
+---
+
+## 依存関係まとめ
+
+```
+ステップ1（テスト）
+    ↓
+ステップ2（pipeline）── ステップ3（API）
+                              ↓
+                        ステップ4（IPC）── ステップ5（型定義）
+                                                ↓
+                                    ステップ6（MetricsPanel）
+                                    ステップ7（StrokeEditor）
+                                          ↓
+                                    ステップ8（GlyphEditor）
+                                          ↓
+                                    ステップ9（FontStudio）
+                                          ↓
+                                    ステップ10（AI連携）
+```
+
+ステップ2と3は並行して進めても OK。
+ステップ6と7も順不同で進められる。
+
+---
+
+## インストール確認が必要なもの
+
+```bash
+# Python
+pip install "fonttools[woff]"   # font_assembler.py が依存
+pip install brotli               # woff2 変換に必要
+pip install Pillow               # preview_renderer.py の画像生成に必要
+
+# Node
+# 追加パッケージは今のところ不要
+```

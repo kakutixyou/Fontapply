@@ -1,0 +1,203 @@
+webforge-ai-desktop/
+│
+├── electron/                                ← Electronメインプロセス
+│   ├── main.ts                              ← アプリ起動・BrowserWindow管理
+│   ├── preload.ts                           ← contextBridge / IPC公開
+│   │
+│   ├── ipc/                                 ← IPCハンドラー（種別ごとに分離）
+│   │   ├── project.ipc.ts                   ← プロジェクトCRUD
+│   │   ├── font.ipc.ts                      ← フォント生成・変換リクエスト
+│   │   ├── export.ipc.ts                    ← エクスポート指示
+│   │   ├── ai.ipc.ts                        ← LLMチャット・生成リクエスト
+│   │   └── db.ipc.ts                        ← DB直接操作（軽量クエリ用）
+│   │
+│   └── utils/
+│       ├── fileManager.ts                   ← ファイル読み書きユーティリティ
+│       └── pathResolver.ts                  ← userData / temp パス一元管理
+│                                               app.getPath('userData') をここで解決
+│
+├── frontend/                                ← React（Vite）
+│   ├── public/
+│   │   └── favicon.ico
+│   │
+│   └── src/
+│       │
+│       ├── pages/                           ← ルートレベルの画面
+│       │   ├── Dashboard.tsx                ← プロジェクト一覧・起動画面
+│       │   ├── Builder.tsx                  ← ビジュアルサイトビルダー
+│       │   ├── FontStudio.tsx               ← フォント作成・管理画面
+│       │   ├── ChatDesigner.tsx             ← AIチャットでデザイン指示
+│       │   ├── Preview.tsx                  ← ブラウザプレビュー
+│       │   └── ExportCenter.tsx             ← エクスポート設定・実行
+│       │
+│       ├── components/
+│       │   ├── layout/
+│       │   │   ├── AppShell.tsx             ← サイドバー + メインエリア外枠
+│       │   │   ├── Sidebar.tsx
+│       │   │   ├── TopBar.tsx
+│       │   │   └── StatusBar.tsx            ← Python接続状態・処理進捗表示
+│       │   │
+│       │   ├── builder/
+│       │   │   ├── Canvas.tsx               ← ドラッグ&ドロップ編集エリア
+│       │   │   ├── ElementPanel.tsx         ← 配置可能要素の一覧
+│       │   │   ├── PropertyPanel.tsx        ← 選択中要素のプロパティ編集
+│       │   │   ├── LayerTree.tsx            ← レイヤー構造表示
+│       │   │   └── StyleEditor.tsx          ← CSS値の直接編集
+│       │   │
+│       │   ├── font/
+│       │   │   ├── FontCard.tsx             ← フォント一覧カード
+│       │   │   ├── FontPreview.tsx          ← リアルタイムプレビュー
+│       │   │   ├── VariableAxesSlider.tsx   ← Variable Font軸調整UI（Phase1）
+│       │   │   ├── SubsetSelector.tsx       ← 文字セット選択UI（Phase2）
+│       │   │   └── GlyphEditor.tsx          ← グリフ直接編集（Phase3・将来）
+│       │   │
+│       │   ├── chat/
+│       │   │   ├── ChatWindow.tsx           ← メッセージ表示エリア
+│       │   │   ├── MessageBubble.tsx
+│       │   │   ├── InputBar.tsx
+│       │   │   └── SuggestionChips.tsx      ← プロンプト候補ボタン
+│       │   │
+│       │   ├── preview/
+│       │   │   ├── PreviewFrame.tsx         ← WebView / iframeラッパー
+│       │   │   ├── DeviceSelector.tsx       ← PC/タブレット/スマホ切替
+│       │   │   └── AnnotationOverlay.tsx    ← AIコメント吹き出し表示
+│       │   │
+│       │   └── common/
+│       │       ├── Button.tsx
+│       │       ├── Modal.tsx
+│       │       ├── Toast.tsx
+│       │       ├── Spinner.tsx
+│       │       ├── ColorPicker.tsx
+│       │       └── FileDropZone.tsx
+│       │
+│       ├── hooks/
+│       │   ├── useProject.ts                ← プロジェクト状態・CRUD操作
+│       │   ├── useFont.ts                   ← フォント生成・woff2変換トリガー
+│       │   ├── useChatAI.ts                 ← LLMストリーミング受信
+│       │   ├── usePreview.ts                ← プレビューHTML更新
+│       │   └── useDynamicFont.ts            ← @font-face 動的登録（前回実装）
+│       │
+│       ├── store/                           ← Zustand グローバル状態
+│       │   ├── projectStore.ts
+│       │   ├── fontStore.ts
+│       │   └── aiStore.ts
+│       │
+│       ├── api/
+│       │   └── electronAPI.ts               ← window.electronAPI の型付きラッパー
+│       │                                       IPC呼び出しをすべてここ経由に統一
+│       │
+│       └── styles/
+│           ├── global.css
+│           ├── tokens.css                   ← デザイントークン（CSS変数）
+│           └── components.css
+│
+├── python_backend/                          ← FastAPI（AI本体）
+│   ├── main.py                              ← FastAPIアプリ起動・ルーター登録
+│   │
+│   ├── api/                                 ← エンドポイント定義（薄いルーター層）
+│   │   ├── routes_site_generator.py         ← POST /generate/site
+│   │   ├── routes_font_generator.py         ← POST /fonts/subset, /fonts/convert
+│   │   ├── routes_llm.py                    ← POST /chat, /chat/stream
+│   │   ├── routes_preview.py                ← GET  /preview/{project_id}
+│   │   └── routes_export.py                 ← POST /export/zip
+│   │
+│   ├── services/                            ← ビジネスロジック本体
+│   │   │
+│   │   ├── ai_site_builder/                 ← サイト自動生成エンジン
+│   │   │   ├── __init__.py
+│   │   │   ├── html_generator.py            ← セクションHTMLを組み立て
+│   │   │   ├── css_generator.py             ← デザイントークン → CSS変換
+│   │   │   ├── js_generator.py              ← インタラクション用JS生成
+│   │   │   ├── section_planner.py           ← ページ構成の設計（AIプロンプト）
+│   │   │   ├── prompt_to_layout.py          ← 自然言語 → レイアウト仕様変換
+│   │   │   │
+│   │   │   └── branding/                    ← ブランディング補助（site_builderの一部）
+│   │   │       ├── __init__.py
+│   │   │       ├── color_palette.py         ← AIによるカラーパレット提案
+│   │   │       ├── slogan_generator.py      ← キャッチコピー生成
+│   │   │       └── logo_hint.py             ← ロゴデザイン方向性のヒント生成
+│   │   │
+│   │   ├── font_engine/                     ← フォント処理エンジン
+│   │   │   ├── __init__.py
+│   │   │   ├── font_loader.py               ← TTF/OTF読み込み・検証
+│   │   │   ├── variable_adjuster.py         ← Phase1: Variable Font軸パラメーター調整
+│   │   │   ├── subset_exporter.py           ← Phase2: サブセット化（pyftsubset）
+│   │   │   ├── woff2_converter.py           ← Phase2: woff2変換・Brotli圧縮
+│   │   │   ├── glyph_modifier.py            ← Phase3: グリフパス編集（将来拡張）
+│   │   │   └── preview_renderer.py          ← フォントプレビュー画像生成
+│   │   │
+│   │   ├── llm_engine/                      ← LLM通信エンジン（プロバイダー非依存）
+│   │   │   ├── __init__.py
+│   │   │   ├── prompt_builder.py            ← コンテキスト付きプロンプト構築
+│   │   │   ├── response_parser.py           ← LLMレスポンスのパース・構造化
+│   │   │   ├── style_instructor.py          ← デザイン指示をCSSに変換するロジック
+│   │   │   │
+│   │   │   └── providers/                   ← LLMプロバイダー切替レイヤー
+│   │   │       ├── __init__.py              ← BaseLLMProvider 抽象クラス定義
+│   │   │       ├── openai.py                ← OpenAI GPT-4o 実装
+│   │   │       └── anthropic.py             ← Claude API 実装（将来追加用）
+│   │   │
+│   │   └── export_engine/                   ← エクスポート処理
+│   │       ├── __init__.py
+│   │       ├── zip_exporter.py              ← 成果物をZIPにまとめる
+│   │       ├── html_packager.py             ← アセット埋め込み・パス解決
+│   │       └── font_embedder.py             ← woff2をbase64でHTMLにインライン化
+│   │
+│   ├── schemas/                             ← Pydanticモデル（DB + APIの型定義）
+│   │   ├── project_schema.py
+│   │   ├── font_schema.py
+│   │   ├── export_schema.py
+│   │   └── llm_schema.py                    ← チャット履歴・レスポンス型
+│   │
+│   └── core/
+│       ├── config.py                        ← 環境変数・設定値の一元管理
+│       ├── llm_client.py                    ← LLMクライアント初期化（providers/ を呼ぶ）
+│       └── file_cache.py                    ← 生成ファイルのキャッシュ管理
+│
+├── database/
+│   ├── repositories/                        ← DBアクセス層（SQLiteをここで閉じ込める）
+│   │   ├── __init__.py
+│   │   ├── project_repo.py
+│   │   ├── font_repo.py
+│   │   └── history_repo.py                  ← チャット・生成履歴
+│   │
+│   └── migrations/                          ← スキーマバージョン管理
+│       ├── 001_initial.sql
+│       └── 002_add_font_table.sql
+│   （app.db 本体は実行時に pathResolver で userData へ生成）
+│
+├── shared/                                  ← Electron ⇄ React ⇄ Python 共通定義
+│   ├── types/                               ← TypeScript型定義
+│   │   ├── project.ts
+│   │   ├── font.ts                          ← FontManifestEntry など（前回設計）
+│   │   ├── ai.ts
+│   │   └── export.ts
+│   │
+│   └── constants/
+│       ├── ipcChannels.ts                   ← IPCチャンネル名を定数化（typo防止）
+│       └── unicodeRanges.ts                 ← サブセット範囲の定義済みプリセット
+│
+├── assets/
+│   ├── base_fonts/                          ← バンドルするベースフォント
+│   │   ├── NotoSansJP-Variable.ttf
+│   │   └── InterVariable.ttf
+│   │
+│   ├── templates/                           ← サイトテンプレート（HTML骨格）
+│   │   ├── landing_basic/
+│   │   ├── portfolio/
+│   │   └── corporate/
+│   │
+│   ├── icons/
+│   └── sample_sites/                        ← デモ・スクリーンショット用
+│
+├── scripts/
+│   ├── start-all.js                         ← Electron + Vite + FastAPI を並列起動
+│   ├── build-all.js                         ← 本番ビルド一括実行
+│   └── setup.js                             ← 初回セットアップ（pip install 等）
+│
+├── .env                                     ← OPENAI_API_KEY など（gitignore必須）
+├── .env.example                             ← キー名だけ記載したサンプル
+├── .gitignore
+├── package.json                             ← npm workspaces（electron + frontend）
+├── requirements.txt                         ← Python依存（fonttools[woff], fastapi等）
+└── README.md
