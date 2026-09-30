@@ -82,7 +82,7 @@ var HttpClientError = /** @class */ (function (_super) {
 }(Error));
 exports.HttpClientError = HttpClientError;
 var DEFAULT_HTTP_CONFIG = {
-    baseUrl: 'http://localhost:8000',
+    baseUrl: 'http://127.0.0.1:8000',
     timeoutMs: 30000,
     retries: 2,
 };

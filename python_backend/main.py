@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import sqlite3
 import sys
 from pathlib import Path
@@ -69,6 +70,11 @@ app.add_middleware(
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "null",
+        *[
+            origin.strip()
+            for origin in os.environ.get("FONT_API_CORS_ORIGINS", "").split(",")
+            if origin.strip()
+        ],
     ],
     allow_origin_regex=r"^app://.*$|^file://.*$",
     allow_credentials=True,
@@ -91,4 +97,8 @@ async def health() -> dict[str, str]:
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    uvicorn.run(
+        app,
+        host=os.environ.get("FONT_API_HOST", "127.0.0.1"),
+        port=int(os.environ.get("FONT_API_PORT", "8000")),
+    )

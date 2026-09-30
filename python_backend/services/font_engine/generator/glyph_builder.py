@@ -17,8 +17,11 @@ A–Z を 3つの幾何学ファミリー関数 + パラメータ辞書で生成
 """
 
 from __future__ import annotations
+import logging
 import math
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 # ── 型エイリアス ──────────────────────────────────────────────────────────────
 Pt      = dict[str, Any]
@@ -575,14 +578,14 @@ _SPECS: dict[str, tuple] = {
 
 def build_glyph(unicode_hex: str) -> GlyphDict | None:
     key = unicode_hex.upper().zfill(4)
-    print(f"   ---> [ビルダー] 辞書(_SPECS)からキー '{key}' を探します...")
+    logger.debug("Looking up glyph specification for U+%s", key)
     
     spec = _SPECS.get(key)
     if spec is None:
-        print(f"   ---> [ビルダー] ⚠️ 辞書に '{key}' が登録されていません！")
+        logger.warning("Glyph specification not found for U+%s", key)
         return None
         
-    print(f"   ---> [ビルダー]  辞書に '{key}' を発見！座標を計算します。")
+    logger.debug("Building glyph geometry for U+%s", key)
     fn, kwargs = spec
     return fn(**kwargs)
 

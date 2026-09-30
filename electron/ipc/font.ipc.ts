@@ -1,7 +1,9 @@
 import { ipcMain, IpcMainInvokeEvent } from 'electron';
 
-// const API_BASE = 'http://localhost:8000';//非推奨
-const API_BASE = 'http://127.0.0.1:8000';
+const API_BASE =
+  process.env.FONT_API_BASE_URL ||
+  process.env.WEBFORGE_FONT_API_BASE_URL ||
+  'http://127.0.0.1:8000';
 // ── ヘルパー: タイムアウト付きの安全なFetch ──
 async function apiFetch(path: string, options?: RequestInit): Promise<any> {
   const controller = new AbortController();

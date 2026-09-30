@@ -49,8 +49,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerFontIpcHandlers = registerFontIpcHandlers;
 var electron_1 = require("electron");
-// const API_BASE = 'http://localhost:8000';//非推奨
-var API_BASE = 'http://127.0.0.1:8000';
+var API_BASE = process.env.FONT_API_BASE_URL || process.env.WEBFORGE_FONT_API_BASE_URL || 'http://127.0.0.1:8000';
 // ── ヘルパー: タイムアウト付きの安全なFetch ──
 function apiFetch(path, options) {
     return __awaiter(this, void 0, void 0, function () {

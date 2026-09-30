@@ -4,6 +4,8 @@ import { create } from 'zustand';
 import type { CharSetKey, GlyphMeta } from '../components/font/CharacterGrid.types';
 import { useFontStore } from './fontStore';
 
+const FONT_API_BASE_URL = import.meta.env.VITE_FONT_API_BASE_URL || 'http://127.0.0.1:8000';
+
 export type GlyphLoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 interface GlyphSelectionState {
@@ -57,7 +59,7 @@ export const useGlyphSelectionStore = create<GlyphSelectionState>((set, get) => 
       } else {
         // ② ブラウザ開発環境
         console.log(`🔵 [React] Pythonに U+${unicode} を要求します...`);
-        const res = await fetch(`http://127.0.0.1:8000/api/glyphs/${unicode}`);
+        const res = await fetch(`${FONT_API_BASE_URL}/api/glyphs/${unicode}`);
         
         if (!res.ok) {
            console.error(`🔴 [React] Pythonがエラーを返しました: ${res.status}`);

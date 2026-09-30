@@ -25,8 +25,8 @@ declare global {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_DESIGN_API_BASE_URL || 'http://localhost:8000';
-const FONT_API_BASE_URL = import.meta.env.VITE_FONT_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_DESIGN_API_BASE_URL || 'http://127.0.0.1:8000';
+const FONT_API_BASE_URL = import.meta.env.VITE_FONT_API_BASE_URL || 'http://127.0.0.1:8000';
 
 async function requestJson<T>(url: string, init: RequestInit = {}): Promise<T> {
   const response = await fetch(url, init);

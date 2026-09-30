@@ -26,7 +26,12 @@ export const useCollaboration = (onRemoteOperation?: (op: RemoteOperation) => vo
     if (!projectId) return;
 
     const userId = localStorage.getItem('userId') || 'anonymous';
-    const wsUrl = `ws://localhost:8000/collab/ws/${projectId}/${userId}`;
+    const apiBaseUrl =
+      import.meta.env.VITE_DESIGN_API_BASE_URL ||
+      import.meta.env.VITE_FONT_API_BASE_URL ||
+      'http://127.0.0.1:8000';
+    const wsBaseUrl = apiBaseUrl.replace(/^http/, 'ws').replace(/\/+$/, '');
+    const wsUrl = `${wsBaseUrl}/collab/ws/${projectId}/${userId}`;
 
     const ws = new WebSocket(wsUrl);
 

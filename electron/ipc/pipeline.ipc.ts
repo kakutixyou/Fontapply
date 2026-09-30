@@ -10,8 +10,13 @@ export function setupPipelineIPC(mainWindow: BrowserWindow) {
 
   // PythonバックエンドのWebSocketに接続
   const connectWebSocket = () => {
-    // ※ Pythonサーバーのポートに合わせて変更してください（例: 8000）
-    wsClient = new WebSocket('ws://localhost:8000/ws/pipeline');
+    const backendUrl =
+      process.env.FONT_API_BASE_URL ||
+      process.env.WEBFORGE_FONT_API_BASE_URL ||
+      'http://127.0.0.1:8000';
+    const websocketUrl = new URL('/ws/pipeline', backendUrl);
+    websocketUrl.protocol = websocketUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+    wsClient = new WebSocket(websocketUrl);
 
     wsClient.on('message', (data) => {
       const payload = JSON.parse(data.toString());

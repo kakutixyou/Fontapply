@@ -5,7 +5,7 @@
   top: 14px;
   right: 14px;
   background: var(--ink-900, #0e0d0b);
-  border: 1px solid rgba(255,255,255,.09);
+  border: 1px solid var(--color-border);
   border-radius: 7px;
   padding: 5px;
   display: flex;
@@ -26,20 +26,20 @@
   cursor: pointer;
   border: none;
   background: transparent;
-  color: rgba(255,255,255,.35);
+  color: var(--color-text-secondary);
   font-size: 15px;
   transition: background var(--t-fast, 120ms ease), color var(--t-fast, 120ms ease);
 }
 .wf-float-toolbar__btn:hover:not(:disabled) {
-  background: rgba(255,255,255,.07);
-  color: rgba(255,255,255,.72);
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
 }
 .wf-float-toolbar__btn--active {
-  background: rgba(192,155,78,.18);
-  color: #e6c97a;
+  background: #dbeafe;
+  color: var(--color-primary-dark);
 }
 .wf-float-toolbar__btn--active:hover:not(:disabled) {
-  background: rgba(192,155,78,.26);
+  background: #bfdbfe;
 }
 .wf-float-toolbar__btn:disabled {
   opacity: 0.28;
@@ -49,6 +49,6 @@
 
 .wf-float-toolbar__sep {
   height: 1px;
-  background: rgba(255,255,255,.07);
+  background: var(--color-border);
   margin: 1px 0;
 }
