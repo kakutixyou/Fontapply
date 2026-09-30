@@ -1,6 +1,7 @@
 // webforge-ai-desktop/frontend/src/pages/FontStudio.tsx
 
 import React, { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { CharacterGrid } from '@/components/font/CharacterGrid';
 import { GlyphEditor } from '@/components/font/GlyphEditor';
 import { MOCK_METRICS } from '@/components/font/GlyphEditor.mock';
@@ -16,11 +17,18 @@ export interface FontStudioProps {
 }
 
 export const FontStudio: React.FC<FontStudioProps> = ({ mode, selectedGlyph }) => {
+  const { projectId: projectIdParam } = useParams<{ projectId: string }>();
+  const parsedProjectId = projectIdParam ? Number(projectIdParam) : null;
+  const projectId = parsedProjectId !== null && Number.isSafeInteger(parsedProjectId) && parsedProjectId > 0
+    ? parsedProjectId
+    : null;
   // ── Stores ──
   const {
     selectedUnicode,
     loadStatus,
     errorMessage,
+    selectedChar,
+    selectedProjectId,
     selectGlyph,
     glyphMetaCache,
     setGlyphMeta,
@@ -70,11 +78,10 @@ export const FontStudio: React.FC<FontStudioProps> = ({ mode, selectedGlyph }) =
   }, [glyphMetaCache.size, setGlyphMeta]);
   // ── 初回: デフォルトグリフ (A: 0041) を自動選択 ──
   useEffect(() => {
-    if (!selectedUnicode) {
-      selectGlyph('0041', 'A');
+    if (!selectedUnicode || selectedProjectId !== projectId) {
+      selectGlyph(selectedUnicode ?? '0041', selectedChar ?? 'A', projectId);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [projectId, selectGlyph, selectedChar, selectedProjectId, selectedUnicode]);
 
   // ── キーボードショートカット: ⌘Z / ⇧⌘Z ──
   useEffect(() => {

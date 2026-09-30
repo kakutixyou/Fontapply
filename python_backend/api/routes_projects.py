@@ -1,6 +1,6 @@
 # webforge-ai-desktop/python_backend/api/routes_projects.py
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 import sqlite3
 import json
@@ -20,13 +20,18 @@ class ProjectBase(BaseModel):
     name: str
     description: Optional[str] = ""
     project_type: str = "font"  # "font" または "site" などを想定
-    settings: dict = {}
+    settings: dict = Field(default_factory=dict)
+    image_path: Optional[str] = None
 
 class ProjectCreate(ProjectBase):
     pass
 
-class ProjectUpdate(ProjectBase):
-    pass
+class ProjectUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    project_type: Optional[str] = None
+    settings: Optional[dict] = None
+    image_path: Optional[str] = None
 
 class ProjectResponse(ProjectBase):
     id: int
@@ -54,21 +59,25 @@ def init_projects_table():
             description TEXT,
             project_type TEXT,
             settings TEXT,
+            image_path TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    columns = {
+        row["name"]
+        for row in conn.execute("PRAGMA table_info(projects)").fetchall()
+    }
+    if "image_path" not in columns:
+        conn.execute("ALTER TABLE projects ADD COLUMN image_path TEXT")
     conn.commit()
     conn.close()
-
-# ルーター読み込み時にテーブルを準備
-init_projects_table()
 
 # ==========================================
 # 3. エンドポイント (CRUD操作)
 # ==========================================
 
-@router.get("/", response_model=List[ProjectResponse])
+@router.get("", response_model=List[ProjectResponse])
 async def list_projects():
     """プロジェクト一覧の取得 (List)"""
     conn = get_db_connection()
@@ -85,12 +94,13 @@ async def list_projects():
             description=row["description"],
             project_type=row["project_type"],
             settings=json.loads(row["settings"]) if row["settings"] else {},
+            image_path=row["image_path"],
             created_at=row["created_at"],
             updated_at=row["updated_at"]
         ))
     return projects
 
-@router.post("/", response_model=ProjectResponse)
+@router.post("", response_model=ProjectResponse)
 async def create_project(project: ProjectCreate):
     """新規プロジェクトの作成 (Create)"""
     conn = get_db_connection()
@@ -98,9 +108,15 @@ async def create_project(project: ProjectCreate):
     
     settings_json = json.dumps(project.settings)
     cursor.execute("""
-        INSERT INTO projects (name, description, project_type, settings)
-        VALUES (?, ?, ?, ?)
-    """, (project.name, project.description, project.project_type, settings_json))
+        INSERT INTO projects (name, description, project_type, settings, image_path)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        project.name,
+        project.description,
+        project.project_type,
+        settings_json,
+        project.image_path,
+    ))
     
     project_id = cursor.lastrowid
     if project_id is None:
@@ -131,6 +147,7 @@ async def get_project(project_id: int):
         description=row["description"],
         project_type=row["project_type"],
         settings=json.loads(row["settings"]) if row["settings"] else {},
+        image_path=row["image_path"],
         created_at=row["created_at"],
         updated_at=row["updated_at"]
     )
@@ -147,14 +164,24 @@ async def update_project(project_id: int, project: ProjectUpdate):
         conn.close()
         raise HTTPException(status_code=404, detail="Project not found")
 
-    settings_json = json.dumps(project.settings)
-    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    
-    cursor.execute("""
-        UPDATE projects
-        SET name = ?, description = ?, project_type = ?, settings = ?, updated_at = ?
-        WHERE id = ?
-    """, (project.name, project.description, project.project_type, settings_json, now, project_id))
+    updates = project.model_dump(exclude_unset=True)
+    updates = {
+        field: value
+        for field, value in updates.items()
+        if value is not None or field == "image_path"
+    }
+    if not updates:
+        conn.close()
+        return await get_project(project_id)
+
+    if "settings" in updates:
+        updates["settings"] = json.dumps(updates["settings"])
+    updates["updated_at"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    assignments = ", ".join(f"{column} = ?" for column in updates)
+    cursor.execute(
+        f"UPDATE projects SET {assignments} WHERE id = ?",
+        (*updates.values(), project_id),
+    )
     
     conn.commit()
     conn.close()
@@ -172,6 +199,7 @@ async def delete_project(project_id: int):
         conn.close()
         raise HTTPException(status_code=404, detail="Project not found")
 
+    cursor.execute("DELETE FROM glyph_overrides WHERE project_id = ?", (project_id,))
     cursor.execute("DELETE FROM projects WHERE id = ?", (project_id,))
     conn.commit()
     conn.close()

@@ -74,6 +74,7 @@ export const DEFAULT_METRICS: FontMetrics = {
 interface FontStoreState {
   currentGlyph: GlyphData | null;
   fontMetrics: FontMetrics;
+  isDirty: boolean;
   
   // Undo/Redo 履歴
   undoStack: GlyphData[];
@@ -81,6 +82,8 @@ interface FontStoreState {
 
   // ── データセット ──
   setCurrentGlyph: (glyph: GlyphData | Record<string, unknown>) => void;
+  markGlyphSaved: (glyph: GlyphData) => void;
+  discardGlyphChanges: () => void;
   setFontMetrics: (metrics: FontMetrics | Record<string, unknown>) => void;
 
   // ── 編集操作 ──
@@ -100,8 +103,12 @@ interface FontStoreState {
 // ══════════════════════════════════════════════════════════════════
 
 function isRawPython(v: GlyphData | Record<string, unknown>): v is Record<string, unknown> {
-  // contours 配列を持っていない、または Python 特有の構造であれば生データと判定
-  return !('contours' in v) || Array.isArray((v as GlyphData).contours) === false;
+  if (!('contours' in v) || !Array.isArray(v.contours)) return true;
+
+  // Python glyph points use x/y and handle_in/handle_out; editor points use pos.
+  return (v.contours as Array<{ points?: Array<Record<string, unknown>> }>).some(
+    contour => contour.points?.some(point => !('pos' in point)) ?? false,
+  );
 }
 
 function updatePointInGlyph(
@@ -128,6 +135,7 @@ function updatePointInGlyph(
 export const useFontStore = create<FontStoreState>((set, get) => ({
   currentGlyph: null,
   fontMetrics: DEFAULT_METRICS,
+  isDirty: false,
   undoStack: [],
   redoStack: [],
 
@@ -138,8 +146,14 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
       : input as GlyphData;
       
     console.log('[fontStore] currentGlyph updated:', glyph); // デバッグ用
-    set({ currentGlyph: glyph, undoStack: [], redoStack: [] });
+    set({ currentGlyph: glyph, undoStack: [], redoStack: [], isDirty: false });
   },
+
+  markGlyphSaved: (glyph) => {
+    if (get().currentGlyph === glyph) set({ isDirty: false });
+  },
+
+  discardGlyphChanges: () => set({ isDirty: false }),
 
   setFontMetrics: (input) => {
     const metrics = ('cap_height' in input || 'x_height' in input)
@@ -164,6 +178,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
     get().pushUndo();
     set({
       currentGlyph: updatePointInGlyph(currentGlyph, cid, pid, p => ({ ...p, pos })),
+      isDirty: true,
     });
     
     // TODO: ここでIPC（バックエンド）に変更を同期する処理を将来的に追加
@@ -196,6 +211,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
           };
         }
       }),
+      isDirty: true,
     });
   },
 
@@ -209,6 +225,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
       currentGlyph: updatePointInGlyph(currentGlyph, cid, pid,
         p => ({ ...p, type, linked: type === 'smooth' }),
       ),
+      isDirty: true,
     });
   },
 
@@ -225,6 +242,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
           c.id !== cid ? c : { ...c, points: c.points.filter(p => p.id !== pid) },
         ),
       },
+      isDirty: true,
     });
   },
 
@@ -238,6 +256,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
       currentGlyph: prev,
       undoStack: undoStack.slice(0, -1),
       redoStack: currentGlyph ? [...redoStack, currentGlyph] : redoStack,
+      isDirty: true,
     });
   },
 
@@ -251,6 +270,7 @@ export const useFontStore = create<FontStoreState>((set, get) => ({
       currentGlyph: next,
       redoStack: redoStack.slice(0, -1),
       undoStack: currentGlyph ? [...undoStack, currentGlyph] : undoStack,
+      isDirty: true,
     });
   },
 }));

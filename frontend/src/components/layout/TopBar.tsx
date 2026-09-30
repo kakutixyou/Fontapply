@@ -12,13 +12,19 @@ interface TopBarProps {
   onModeChange?: (mode: EditorMode) => void;
   collabUsers?: any[];
   isSaving?: boolean;
-  onSave?: () => void;
+  saveMessage?: string;
+  canSave?: boolean;
+  onSave?: () => void | Promise<void>;
 }
 
 const TopBar: React.FC<TopBarProps> = ({ 
   mode = 'edit', 
   onModeChange, 
-  projectName = 'WebForge AI Desktop' 
+  projectName = 'WebForge AI Desktop',
+  isSaving = false,
+  saveMessage = '',
+  canSave = false,
+  onSave,
 }) => {
   const [isMaximized, setIsMaximized] = React.useState(false);
 
@@ -53,6 +59,19 @@ const TopBar: React.FC<TopBarProps> = ({
       */}
 
       <div className="top-bar-right">
+        {onSave && (
+          <>
+            {saveMessage && <span className="top-bar-save-status" role="status">{saveMessage}</span>}
+            <button
+              className="top-bar-save-button"
+              type="button"
+              onClick={() => void onSave()}
+              disabled={isSaving || !canSave}
+            >
+              {isSaving ? '保存中…' : '保存'}
+            </button>
+          </>
+        )}
         <div className="window-controls">
           <button 
             className="window-control-btn minimize"

@@ -1,8 +1,9 @@
 export interface ProjectRecord {
-  id: string;
+  id: number;
   name: string;
-  image_path: string;
+  image_path?: string | null;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface CreateProjectInput {

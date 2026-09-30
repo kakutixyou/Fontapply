@@ -5,7 +5,7 @@ import { useFontStore } from '../store/fontStore';
 export default function ExportPanel() {
   const currentGlyph = useFontStore((state: any) => state.currentGlyph);
   
-  const metrics = useFontStore((state: any) => state.metrics) || {
+  const metrics = useFontStore((state) => state.fontMetrics) || {
     capHeight: 680,
     descender: -200,
   };

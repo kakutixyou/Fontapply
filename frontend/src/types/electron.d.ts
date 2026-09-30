@@ -12,11 +12,12 @@ import type {
 import type { PipelinePayload } from '../components/font/aiPipeline.types';
 
 export interface ElectronAPI {
+  invoke: (channel: string, ...args: unknown[]) => Promise<any>;
   // ── 既存のプロジェクト・AI機能 ──
   createProject: (data: any) => Promise<any>;
-  readProject: (id: string) => Promise<any>;
-  updateProject: (id: string, data: any) => Promise<any>;
-  deleteProject: (id: string) => Promise<any>;
+  readProject: (id: number | string) => Promise<any>;
+  updateProject: (id: number | string, data: any) => Promise<any>;
+  deleteProject: (id: number | string) => Promise<any>;
   listProjects: () => Promise<any[]>;
   chatAI: (message: string) => Promise<any>;
   generateAI: (prompt: string) => Promise<any>;
@@ -34,6 +35,7 @@ export interface ElectronAPI {
   // ── フォント・グリフデータ管理 ──
   getGlyphs: () => Promise<any[]>;
   getGlyphData: (unicode: string) => Promise<any>;
+  saveGlyph: (unicode: string, glyph: import('../components/font/GlyphEditor.types').GlyphData) => Promise<{ glyph: import('../components/font/GlyphEditor.types').GlyphData }>;
   saveFont: (fontData: any) => Promise<{ success: boolean; message?: string }>;
   updateGlyphPoint: (unicode: string, contourId: string, pointId: string, position: {x: number, y: number}) => Promise<any>;
   // ── AI学習データパイプライン ──
