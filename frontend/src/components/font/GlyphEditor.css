@@ -18,7 +18,7 @@
   align-items: center;
   padding: 8px 16px;
   background-color: #122240; /* 少し明るい海の色 */
-  border-bottom: 1px solid #1e3a5f; /* 水中の境界線 */
+  border-bottom: 1px solid #54708f; /* 水中の境界線 */
   gap: 8px;
   flex-shrink: 0;
   z-index: 10;
@@ -39,12 +39,12 @@
 }
 
 .wf-editor-topbar__btn:hover {
-  background-color: #1e3a5f;
+  background-color: #25466e;
   color: #48cae4; /* ホバーで鮮やかなシアンに光る */
 }
 
 .wf-editor-topbar__btn--active {
-  background-color: #2b5278;
+  background-color: #315d8a;
   color: #00f5ff; /* アクティブ時は発光するシアン */
   box-shadow: 0 0 8px rgba(0, 245, 255, 0.25); /* 水中での発光効果 */
 }
@@ -52,7 +52,7 @@
 .wf-editor-topbar__sep {
   width: 1px;
   height: 20px;
-  background-color: #1e3a5f;
+  background-color: #54708f;
   margin: 0 4px;
 }
 
@@ -91,7 +91,7 @@
 .wf-glyph-editor__coord-hud {
   position: absolute;
   background-color: rgba(11, 21, 40, 0.85); /* 半透明のネイビー */
-  border: 1px solid #1e3a5f;
+  border: 1px solid #54708f;
   color: #48cae4; /* シアンのテキスト */
   padding: 6px 14px;
   border-radius: 20px;

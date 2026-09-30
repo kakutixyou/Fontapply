@@ -151,6 +151,11 @@ button:disabled {
   cursor: not-allowed;
 }
 
+button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 /* Forms */
 input,
 textarea,
@@ -168,7 +173,12 @@ textarea:focus,
 select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.2);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text-tertiary);
 }
 
 /* Utility Classes */

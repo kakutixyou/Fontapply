@@ -1,23 +1,33 @@
 :root {
   /* Colors - Primary */
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-primary-dark: #4f46e5;
+  --color-primary: #1d4ed8;
+  --color-primary-light: #3b82f6;
+  --color-primary-dark: #1e40af;
 
   /* Colors - Semantic */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-success: #047857;
+  --color-warning: #92400e;
+  --color-error: #b91c1c;
+  --color-danger: var(--color-error);
+  --color-info: #1d4ed8;
 
   /* Colors - Neutral */
   --color-bg: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-tertiary: #f3f4f6;
-  --color-border: #e5e7eb;
-  --color-text-primary: #1f2937;
-  --color-text-secondary: #6b7280;
-  --color-text-tertiary: #9ca3af;
+  --color-bg-secondary: #f1f5f9;
+  --color-bg-tertiary: #e2e8f0;
+  --color-border: #cbd5e1;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-tertiary: #475569;
+
+  /* Aliases used by the editor panels */
+  --ink-900: var(--color-bg-secondary);
+  --ink-800: var(--color-bg);
+  --ink-500: var(--color-border);
+  --paper-100: var(--color-text-primary);
+  --border-subtle: 1px solid var(--color-border);
+  --brass-500: #9a6700;
+  --z-topbar: var(--z-sticky);
 
   /* Spacing */
   --spacing-xs: 4px;
@@ -73,17 +83,4 @@
   --z-modal: 1050;
   --z-popover: 1060;
   --z-tooltip: 1070;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #1f2937;
-    --color-bg-secondary: #111827;
-    --color-bg-tertiary: #0f172a;
-    --color-border: #374151;
-    --color-text-primary: #f9fafb;
-    --color-text-secondary: #d1d5db;
-    --color-text-tertiary: #9ca3af;
-  }
 }

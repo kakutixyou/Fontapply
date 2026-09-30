@@ -74,7 +74,7 @@ function createWindow() {
     });
 }
 electron_1.app.on('ready', function () {
-    var backendUrl = process.env.FONT_API_BASE_URL || process.env.WEBFORGE_FONT_API_BASE_URL || 'http://localhost:8000';
+    var backendUrl = process.env.FONT_API_BASE_URL || process.env.WEBFORGE_FONT_API_BASE_URL || 'http://127.0.0.1:8000';
     try {
         (0, utils_1.initHttpClient)({ baseUrl: backendUrl, timeoutMs: 30000, retries: 2 });
         (0, font_ipc_1.registerFontIpcHandlers)();

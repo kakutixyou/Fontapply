@@ -10,6 +10,8 @@ routes_font_generator.py  ← glyph_builder ブリッジ版
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Any, Optional
@@ -20,6 +22,7 @@ from ..services.font_engine.generator.glyph_builder import (
 )
 
 router = APIRouter(prefix="/glyphs", tags=["glyphs"])
+logger = logging.getLogger(__name__)
 
 
 # ── フォントメトリクス（全グリフ共通） ────────────────────────────────────────
@@ -72,21 +75,17 @@ async def list_glyphs() -> GlyphListResponse:
 
 @router.get("/{unicode}", response_model=GlyphResponse)
 async def get_glyph(unicode: str) -> GlyphResponse:
-    print(f"\n★★★ [ルーター] リクエスト到着! 要求された文字: {unicode} ★★★")
-    
     normalized = unicode.upper().zfill(4)
-    print(f"★★★ [ルーター] 正規化後: {normalized} ★★★")
-    
+    logger.info("Glyph request received: U+%s", normalized)
     glyph_data = build_glyph(normalized)
     
     if glyph_data is None:
-        print(f"❌❌❌ [ルーター] エラー: {normalized} は _SPECS 辞書に見つかりません！ ❌❌❌")
+        logger.warning("Glyph not implemented: U+%s", normalized)
         raise HTTPException(
             status_code=404,
             detail=f"Glyph U+{normalized} is not yet implemented in glyph_builder.py"
         )
 
-    print(f"✅✅✅ [ルーター] 成功! {normalized} のデータをフロントエンドに返却します ✅✅✅")
     return GlyphResponse(glyph=glyph_data, metrics=FONT_METRICS)
 
 @router.get("/{unicode}/metrics", response_model=MetricsResponse)

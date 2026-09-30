@@ -43,7 +43,7 @@ function createWindow() {
 }
 
 app.on('ready', () => {
-  const backendUrl = process.env.FONT_API_BASE_URL || process.env.WEBFORGE_FONT_API_BASE_URL || 'http://localhost:8000';
+  const backendUrl = process.env.FONT_API_BASE_URL || process.env.WEBFORGE_FONT_API_BASE_URL || 'http://127.0.0.1:8000';
 
   try {
     initHttpClient({ baseUrl: backendUrl, timeoutMs: 30_000, retries: 2 });

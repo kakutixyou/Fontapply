@@ -30,7 +30,7 @@ interface HttpClientConfig {
 }
 
 const DEFAULT_HTTP_CONFIG: HttpClientConfig = {
-  baseUrl: 'http://localhost:8000',
+  baseUrl: 'http://127.0.0.1:8000',
   timeoutMs: 30_000,
   retries: 2,
 };

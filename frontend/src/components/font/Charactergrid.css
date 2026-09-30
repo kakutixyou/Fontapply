@@ -351,3 +351,102 @@
   background: rgba(192,155,78,.28);
 }
 .wf-cgrid__edit-btn .ti { font-size: 12px; }
+
+/* Light surfaces keep glyph previews and controls easy to distinguish. */
+.wf-cgrid__header,
+.wf-cgrid__preview {
+  border-color: var(--color-border);
+}
+.wf-cgrid__header-title,
+.wf-cgrid__counter,
+.wf-cgrid__search-icon,
+.wf-cgrid__section-label,
+.wf-cgrid__empty,
+.wf-cgrid__empty .ti,
+.wf-cgrid__meta-label,
+.wf-cgrid__meta-name {
+  color: var(--color-text-secondary);
+}
+.wf-cgrid__tab,
+.wf-cgrid__search,
+.wf-cgrid__meta-val {
+  color: var(--color-text-primary);
+}
+.wf-cgrid__tab:hover {
+  background: var(--color-bg-tertiary);
+  color: var(--color-text-primary);
+}
+.wf-cgrid__tab--active {
+  background: #dbeafe;
+  color: var(--color-primary-dark);
+}
+.wf-cgrid__search {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+}
+.wf-cgrid__search::placeholder {
+  color: var(--color-text-tertiary);
+}
+.wf-cgrid__search:focus {
+  border-color: var(--color-primary);
+  background: var(--color-bg);
+}
+.wf-cgrid__body {
+  scrollbar-color: var(--color-border) transparent;
+}
+.wf-cgrid__body::-webkit-scrollbar-thumb,
+.wf-cgrid__empty-mark {
+  background: var(--color-border);
+}
+.wf-cgrid__cell {
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  border-color: var(--color-border);
+}
+.wf-cgrid__cell:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border-color: var(--color-text-secondary);
+}
+.wf-cgrid__cell--selected,
+.wf-cgrid__cell--selected:hover {
+  color: var(--color-primary-dark);
+  background: #dbeafe;
+  border-color: var(--color-primary);
+}
+.wf-cgrid__cell--draft {
+  border-color: #b7791f;
+}
+.wf-cgrid__cell:focus-visible {
+  outline-color: var(--color-primary);
+}
+.wf-cgrid__preview-glyph,
+.wf-cgrid__meta-val {
+  color: var(--color-text-primary);
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border);
+}
+.wf-cgrid__badge--drawn,
+.wf-cgrid__badge--ai {
+  color: var(--color-success);
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+}
+.wf-cgrid__badge--draft {
+  color: #855b00;
+  background: #fffbeb;
+  border-color: #fcd34d;
+}
+.wf-cgrid__badge--todo {
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border-color: var(--color-border);
+}
+.wf-cgrid__edit-btn {
+  color: #855b00;
+  background: #fffbeb;
+  border-color: #b7791f;
+}
+.wf-cgrid__edit-btn:hover {
+  background: #fef3c7;
+}
