@@ -1,0 +1,113 @@
+/* GlyphEditor.css - Blue Ocean Theme */
+
+/* ── エディタ全体のコンテナ ── */
+.wf-glyph-editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: #0b1528; /* 深海のような深いネイビー */
+  color: #e0fbfc; /* 波しぶきのような白水色 */
+  font-family: 'DM Mono', monospace, sans-serif;
+  overflow: hidden; /* アプリ全体の不要なスクロールを防ぐ */
+}
+
+/* ── 上部ツールバー ── */
+.wf-editor-topbar {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #122240; /* 少し明るい海の色 */
+  border-bottom: 1px solid #1e3a5f; /* 水中の境界線 */
+  gap: 8px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.wf-editor-topbar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  color: #8ab4f8; /* 柔らかいオーシャンブルー */
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.wf-editor-topbar__btn:hover {
+  background-color: #1e3a5f;
+  color: #48cae4; /* ホバーで鮮やかなシアンに光る */
+}
+
+.wf-editor-topbar__btn--active {
+  background-color: #2b5278;
+  color: #00f5ff; /* アクティブ時は発光するシアン */
+  box-shadow: 0 0 8px rgba(0, 245, 255, 0.25); /* 水中での発光効果 */
+}
+
+.wf-editor-topbar__sep {
+  width: 1px;
+  height: 20px;
+  background-color: #1e3a5f;
+  margin: 0 4px;
+}
+
+.wf-editor-topbar__spacer {
+  flex-grow: 1;
+}
+
+.wf-editor-topbar__zoom {
+  font-size: 13px;
+  color: #8ab4f8;
+  margin-right: 8px;
+}
+
+/* ── キャンバスエリア（ここに最強の壁を作ります） ── */
+.wf-glyph-editor__canvas-wrap {
+  flex-grow: 1;
+  position: relative;
+  
+  /* 🚨 ここがUnityの「見えない壁」！外へのスクロールを絶対許さない */
+  overflow: hidden; 
+  touch-action: none; /* スマホやパッドでのブラウザスワイプバックを無効化 */
+  
+  /* 中央が明るく、端が暗い水中のようなグラデーション */
+  background: radial-gradient(circle at center, #11203c 0%, #080f1c 100%); 
+}
+
+.wf-glyph-editor__svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none; /* Tabキーでフォーカスが当たった時の青い枠線を消す */
+}
+
+/* ── 下部の情報ピルと座標HUD ── */
+.wf-glyph-editor__info-pill,
+.wf-glyph-editor__coord-hud {
+  position: absolute;
+  background-color: rgba(11, 21, 40, 0.85); /* 半透明のネイビー */
+  border: 1px solid #1e3a5f;
+  color: #48cae4; /* シアンのテキスト */
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  pointer-events: none; /* マウスイベントを貫通させる */
+  backdrop-filter: blur(4px); /* すりガラス効果で水中の浮遊感を演出 */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.wf-glyph-editor__info-pill {
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.wf-glyph-editor__coord-hud {
+  bottom: 20px;
+  right: 20px;
+}

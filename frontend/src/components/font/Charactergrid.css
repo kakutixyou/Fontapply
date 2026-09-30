@@ -1,0 +1,353 @@
+/* ============================================================
+   CharacterGrid.css
+   活版印刷 × ハッカーダーク テーマ
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400&display=swap');
+
+/* ── ルート ── */
+.wf-cgrid {
+  display: flex;
+  flex-direction: column;
+  background: var(--ink-900, #0e0d0b);
+  overflow: hidden;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 11px;
+}
+.wf-cgrid--compact .wf-cgrid__header {
+  padding: 6px 10px;
+}
+.wf-cgrid--compact .wf-cgrid__body {
+  padding: 6px 10px 8px;
+}
+
+/* ── Header ── */
+.wf-cgrid__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 13px;
+  background: var(--ink-800, #171613);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+}
+.wf-cgrid__header-title {
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.22);
+  flex-shrink: 0;
+}
+
+/* ── Tabs ── */
+.wf-cgrid__tabs {
+  display: flex;
+  gap: 2px;
+}
+.wf-cgrid__tab {
+  padding: 4px 11px;
+  border-radius: 4px;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 10px;
+  letter-spacing: .04em;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,.35);
+  transition: background var(--t-fast, 120ms), color var(--t-fast, 120ms);
+}
+.wf-cgrid__tab:hover {
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.72);
+}
+.wf-cgrid__tab--active {
+  background: rgba(192,155,78,.18);
+  color: #e6c97a;
+}
+
+/* ── Counter ── */
+.wf-cgrid__counter {
+  font-size: 9px;
+  color: rgba(255,255,255,.2);
+  letter-spacing: .04em;
+  margin-left: auto;
+}
+
+/* ── Search ── */
+.wf-cgrid__search-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.wf-cgrid__search-icon {
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: rgba(255,255,255,.25);
+  pointer-events: none;
+}
+.wf-cgrid__search {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 4px;
+  padding: 4px 8px 4px 26px;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 10px;
+  color: rgba(255,255,255,.65);
+  outline: none;
+  width: 116px;
+  transition: border-color var(--t-fast, 120ms), background var(--t-fast, 120ms);
+}
+.wf-cgrid__search::placeholder {
+  color: rgba(255,255,255,.2);
+}
+.wf-cgrid__search:focus {
+  border-color: rgba(192,155,78,.42);
+  background: rgba(255,255,255,.07);
+}
+
+/* ── Body ── */
+.wf-cgrid__body {
+  padding: 10px 12px 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.12) transparent;
+}
+.wf-cgrid__body::-webkit-scrollbar { width: 4px; }
+.wf-cgrid__body::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.1);
+  border-radius: 2px;
+}
+
+/* ── Sections ── */
+.wf-cgrid__section {
+  margin-bottom: 12px;
+}
+.wf-cgrid__section-label {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+  margin-bottom: 6px;
+  padding-left: 2px;
+}
+
+/* ── Grids ── */
+.wf-cgrid__grid {
+  display: grid;
+  gap: 3px;
+}
+.wf-cgrid__grid--lat {
+  grid-template-columns: repeat(13, 1fr);
+}
+.wf-cgrid__grid--jp {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+/* ── Cell ── */
+.wf-cgrid__cell {
+  aspect-ratio: 1;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: rgba(255,255,255,.45);
+  position: relative;
+  padding: 0;
+  min-width: 0;
+  transition:
+    background var(--t-fast, 120ms),
+    color var(--t-fast, 120ms),
+    border-color var(--t-fast, 120ms);
+}
+.wf-cgrid__cell--lat {
+  font-family: 'Fraunces', 'Georgia', serif;
+  font-size: 14px;
+}
+.wf-cgrid__cell--jp {
+  font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  font-size: 12px;
+}
+.wf-cgrid__cell:hover {
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.88);
+  border-color: rgba(255,255,255,.14);
+}
+.wf-cgrid__cell--selected {
+  background: rgba(192,155,78,.18);
+  border-color: rgba(192,155,78,.48);
+  color: #e6c97a;
+}
+.wf-cgrid__cell--selected:hover {
+  background: rgba(192,155,78,.24);
+}
+.wf-cgrid__cell--draft {
+  /* 未保存変更があるグリフ — 微妙に明るい縁 */
+  border-color: rgba(232,168,58,.28);
+}
+.wf-cgrid__cell:focus-visible {
+  outline: 2px solid rgba(192,155,78,.6);
+  outline-offset: 1px;
+}
+
+/* AI 収集済みドット */
+.wf-cgrid__captured-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #1d9e75;
+}
+
+/* 未着手マーク（右下の薄い四角） */
+.wf-cgrid__empty-mark {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 0.5px;
+  background: rgba(255,255,255,.12);
+}
+
+/* ── Empty state ── */
+.wf-cgrid__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 28px 12px;
+  color: rgba(255,255,255,.25);
+  font-size: 11px;
+  text-align: center;
+}
+.wf-cgrid__empty .ti {
+  font-size: 22px;
+  color: rgba(255,255,255,.15);
+}
+
+/* ── Preview panel ── */
+.wf-cgrid__preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 13px;
+  background: var(--ink-800, #171613);
+  border-top: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+}
+.wf-cgrid__preview-glyph {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 5px;
+  flex-shrink: 0;
+  font-family: 'Fraunces', 'Georgia', serif;
+  font-size: 42px;
+  color: rgba(255,255,255,.75);
+  line-height: 1;
+}
+.wf-cgrid__preview-glyph--jp {
+  font-family: 'Noto Serif JP', 'Hiragino Mincho ProN', serif;
+  font-size: 32px;
+}
+
+.wf-cgrid__preview-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.wf-cgrid__meta-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+}
+.wf-cgrid__meta-label {
+  color: rgba(255,255,255,.28);
+  flex-shrink: 0;
+  min-width: 44px;
+}
+.wf-cgrid__meta-val {
+  color: rgba(255,255,255,.65);
+  background: rgba(255,255,255,.05);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 10px;
+}
+.wf-cgrid__meta-name {
+  color: rgba(255,255,255,.5);
+  font-size: 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Status / AI badges */
+.wf-cgrid__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 3px;
+  font-size: 9px;
+  letter-spacing: .04em;
+}
+.wf-cgrid__badge .ti { font-size: 11px; }
+.wf-cgrid__badge--drawn {
+  background: rgba(29,158,117,.14);
+  color: #1d9e75;
+  border: 1px solid rgba(29,158,117,.25);
+}
+.wf-cgrid__badge--draft {
+  background: rgba(232,168,58,.14);
+  color: #e8a83a;
+  border: 1px solid rgba(232,168,58,.25);
+}
+.wf-cgrid__badge--todo {
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.3);
+  border: 1px solid rgba(255,255,255,.09);
+}
+.wf-cgrid__badge--ai {
+  background: rgba(29,158,117,.1);
+  color: rgba(29,158,117,.8);
+  border: 1px solid rgba(29,158,117,.2);
+}
+
+/* Edit button */
+.wf-cgrid__edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  padding: 6px 13px;
+  border-radius: 5px;
+  background: rgba(192,155,78,.18);
+  border: 1px solid rgba(192,155,78,.38);
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 10px;
+  color: #e6c97a;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: background var(--t-fast, 120ms);
+}
+.wf-cgrid__edit-btn:hover {
+  background: rgba(192,155,78,.28);
+}
+.wf-cgrid__edit-btn .ti { font-size: 12px; }

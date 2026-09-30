@@ -1,0 +1,128 @@
+/* FontStudio.css — 追加スタイル（既存ファイルに追記） */
+
+/* ── エラー状態 ── */
+.wf-fontstudio__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 11px;
+  color: rgba(232, 93, 58, 0.75);
+}
+.wf-fontstudio__error .ti {
+  font-size: 28px;
+  color: rgba(232, 93, 58, 0.5);
+}
+.wf-fontstudio__error-msg {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 4px 10px;
+  border-radius: 4px;
+  max-width: 400px;
+  text-align: center;
+  word-break: break-all;
+}
+.wf-fontstudio__error-retry {
+  margin-top: 4px;
+  padding: 5px 14px;
+  border-radius: 5px;
+  background: rgba(232, 93, 58, 0.15);
+  border: 1px solid rgba(232, 93, 58, 0.3);
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 10px;
+  color: rgba(232, 93, 58, 0.8);
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.wf-fontstudio__error-retry:hover {
+  background: rgba(232, 93, 58, 0.25);
+}
+
+/* ── 既存スタイルの確認のため再掲（本体 FontStudio.css に既にあればスキップ） ── */
+
+.wf-fontstudio {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.wf-fontstudio__canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.wf-fontstudio__loading {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: rgba(14, 13, 11, 0.75);
+  z-index: 50;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.45);
+}
+.wf-fontstudio__loading-spinner {
+  font-size: 22px;
+  color: var(--brass-500, #c09b4e);
+  animation: wf-spin 1s linear infinite;
+}
+
+.wf-fontstudio__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 100%;
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+}
+.wf-fontstudio__placeholder .ti {
+  font-size: 28px;
+  color: rgba(255, 255, 255, 0.1);
+}
+
+.wf-fontstudio__picker-main {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--ink-900, #0e0d0b);
+  display: flex;
+  flex-direction: column;
+}
+
+.wf-fontstudio__dev-strip {
+  flex-shrink: 0;
+  height: 20px;
+  background: rgba(232, 93, 58, 0.08);
+  border-top: 1px solid rgba(232, 93, 58, 0.2);
+  font-family: var(--font-mono, 'DM Mono', monospace);
+  font-size: 9px;
+  color: rgba(232, 93, 58, 0.6);
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.wf-fontstudio__dev-strip code {
+  color: rgba(232, 93, 58, 0.9);
+}
+
+@keyframes wf-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

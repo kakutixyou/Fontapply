@@ -1,0 +1,32 @@
+/* frontend/src/layout/AppShell.css または global.css */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: var(--bg-color, #121212);
+  color: var(--text-color, #e0e0e0);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  overflow: hidden; /* デスクトップアプリらしく全体のスクロールは無効化 */
+}
+
+/* AppShell自体を縦方向のFlexコンテナにする */
+.app-shell-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+.wf-app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #1e1e1e; /* ダークテーマの背景色 */
+}
+
+.wf-main-content {
+  flex: 1; /* 残りのスペースをすべて使う */
+  position: relative;
+  overflow: hidden; /* 中身のスクロールは各ページに任せる */
+}

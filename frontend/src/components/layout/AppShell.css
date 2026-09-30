@@ -1,0 +1,143 @@
+/* ============================================================
+   AppShell.css — WebForge pane layout
+   ============================================================ */
+
+.wf-shell {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--ink-800);
+  color: var(--paper-100);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+/* ── TopBar ── */
+.wf-shell__topbar {
+  height: var(--topbar-h);
+  flex-shrink: 0;
+  z-index: var(--z-topbar);
+}
+
+/* ── Body row ── */
+.wf-shell__body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Sidebar ── */
+.wf-shell__sidebar {
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width var(--t-base);
+  min-width: 0;
+  z-index: var(--z-sidebar);
+}
+.wf-shell__sidebar--collapsed {
+  width: 0 !important;
+}
+.wf-shell__sidebar-inner {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--ink-900);
+  border-right: var(--border-subtle);
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-500) transparent;
+}
+.wf-shell__sidebar-inner::-webkit-scrollbar { width: 4px; }
+.wf-shell__sidebar-inner::-webkit-scrollbar-thumb {
+  background: var(--ink-500);
+  border-radius: 2px;
+}
+
+/* ── Main ── */
+.wf-shell__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--ink-800);
+}
+
+/* ── Right panel ── */
+.wf-shell__rightpanel {
+  flex-shrink: 0;
+  overflow: hidden;
+  transition: width var(--t-base);
+  min-width: 0;
+}
+.wf-shell__rightpanel--collapsed {
+  width: 0 !important;
+}
+.wf-shell__rightpanel-inner {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--ink-900);
+  border-left: var(--border-subtle);
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink-500) transparent;
+}
+.wf-shell__rightpanel-inner::-webkit-scrollbar { width: 4px; }
+.wf-shell__rightpanel-inner::-webkit-scrollbar-thumb {
+  background: var(--ink-500);
+  border-radius: 2px;
+}
+
+/* ── Resize Handles ── */
+.wf-shell__resize-handle {
+  width: 4px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  background: transparent;
+  position: relative;
+  transition: background var(--t-fast);
+  z-index: 5;
+}
+.wf-shell__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.0);
+  border-radius: 1px;
+  transition: background var(--t-fast), height var(--t-base);
+}
+.wf-shell__resize-handle:hover {
+  background: rgba(192, 155, 78, 0.12);
+}
+.wf-shell__resize-handle:hover::after {
+  background: var(--brass-500);
+  height: 80px;
+}
+.wf-shell__resize-handle:active {
+  background: rgba(192, 155, 78, 0.2);
+}
+
+/* ── StatusBar ── */
+.wf-shell__statusbar {
+  height: var(--statusbar-h);
+  flex-shrink: 0;
+}
+.wf-app-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: #1e1e1e; /* ダークテーマの背景色 */
+}
+
+.wf-main-content {
+  flex: 1; /* 残りのスペースをすべて使う */
+  position: relative;
+  overflow: hidden; /* 中身のスクロールは各ページに任せる */
+}

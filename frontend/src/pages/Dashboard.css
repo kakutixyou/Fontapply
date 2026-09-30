@@ -1,0 +1,172 @@
+/* Dashboard.css */
+
+.dashboard-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  color: var(--text-color, #ececec);
+}
+
+.dashboard-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 1rem;
+}
+
+.section-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+  margin-bottom: 0.25rem;
+}
+
+.dashboard-page__header h1 {
+  margin: 0 0 0.5rem 0;
+  font-size: 2rem;
+}
+
+.dashboard-page__actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.dashboard-page__actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  background: #3a7ce8;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.dashboard-page__actions button:hover {
+  background: #2b61b8;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.dashboard-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dashboard-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+}
+
+.dashboard-card__meta {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin-top: 1rem;
+}
+
+.dashboard-card__actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.dashboard-card__actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: none;
+  background: #444;
+  color: white;
+  cursor: pointer;
+}
+
+.dashboard-card__actions button.button--ghost {
+  background: transparent;
+  border: 1px solid #555;
+}
+
+.dashboard-card__actions button.button--ghost:hover {
+  background: rgba(255, 80, 80, 0.2);
+  border-color: #ff5050;
+  color: #ff5050;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: #1e1e1e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 2rem;
+  border-radius: 8px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-card input {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 1rem 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 4px;
+}
+
+.modal-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-card__actions button {
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.modal-card__actions button:not(.button--ghost) {
+  background: #3a7ce8;
+  color: white;
+}
+
+.modal-card__actions .button--ghost {
+  background: transparent;
+  color: #aaa;
+}
+
+.modal-card__actions .button--ghost:hover {
+  color: white;
+}

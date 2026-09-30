@@ -1,0 +1,1 @@
+export { useFontStore } from './fontStore';

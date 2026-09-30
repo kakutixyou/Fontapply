@@ -1,0 +1,54 @@
+/* FloatingToolbar.css */
+
+.wf-float-toolbar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--ink-900, #0e0d0b);
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 7px;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 10;
+  max-height: 90%; /* 画面の高さの90%までに制限 */
+  overflow-y: auto; /* はみ出したらスクロールバーを出す */
+}
+
+.wf-float-toolbar__btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,.35);
+  font-size: 15px;
+  transition: background var(--t-fast, 120ms ease), color var(--t-fast, 120ms ease);
+}
+.wf-float-toolbar__btn:hover:not(:disabled) {
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.72);
+}
+.wf-float-toolbar__btn--active {
+  background: rgba(192,155,78,.18);
+  color: #e6c97a;
+}
+.wf-float-toolbar__btn--active:hover:not(:disabled) {
+  background: rgba(192,155,78,.26);
+}
+.wf-float-toolbar__btn:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+.wf-float-toolbar__btn .ti { line-height: 1; }
+
+.wf-float-toolbar__sep {
+  height: 1px;
+  background: rgba(255,255,255,.07);
+  margin: 1px 0;
+}
