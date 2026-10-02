@@ -1,6 +1,6 @@
 // webforge-ai-desktop/frontend/src/App.tsx
-import React, { useState } from 'react';
-import { HashRouter, Routes, Route, Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { HashRouter, Routes, Route, Outlet, useParams } from 'react-router-dom';
 import { CharacterGrid } from './components/font/CharacterGrid'; // パスは環境に合わせてください
 import { useGlyphSelectionStore } from './store/glyphSelectionStore';
 // 1. CSSのインポート
@@ -19,6 +19,8 @@ import { AIPipelinePanel } from './components/font/AiPipelinepanel';
 import { makeMockPayload } from './components/font/aiPipeline.mock';
 // import { AiPipelinePayload } from './components/font/aiPipeline.types';
 import ExportPanel from './pages/ExportPanel';
+import { electronAPI } from './api/electronAPI';
+import { useFontStore } from './store/fontStore';
 // 3. 型の仮定義（既存のまま）
 // export type EditorMode = 'edit' | 'preview' | 'inspect';
 export type EditorMode = 'edit' | 'preview' | 'metrics';
@@ -44,11 +46,18 @@ const MainLayout: React.FC<{
   editorMode: EditorMode;
   setEditorMode: (mode: EditorMode) => void;
   isSaving: boolean;
-  handleSave: () => void;
+  handleSave: () => Promise<void>;
+  saveMessage: string;
+  canSave: boolean;
   backendStatus: BackendStatus;
-}> = ({ editorMode, setEditorMode, isSaving, handleSave, backendStatus }) => {
+}> = ({ editorMode, setEditorMode, isSaving, handleSave, saveMessage, canSave, backendStatus }) => {
   
   // Zustandから選択状態を取得
+  const { projectId: projectIdParam } = useParams<{ projectId: string }>();
+  const parsedProjectId = projectIdParam ? Number(projectIdParam) : null;
+  const projectId = parsedProjectId !== null && Number.isSafeInteger(parsedProjectId) && parsedProjectId > 0
+    ? parsedProjectId
+    : null;
   const { selectedUnicode, selectGlyph } = useGlyphSelectionStore();
 
   return (
@@ -62,6 +71,8 @@ const MainLayout: React.FC<{
           // onModeChange={setEditorMode}
           collabUsers={DEMO_COLLAB_USERS}
           isSaving={isSaving}
+          saveMessage={saveMessage}
+          canSave={canSave}
           onSave={handleSave}
         />
       }
@@ -104,7 +115,7 @@ const MainLayout: React.FC<{
             <CharacterGrid 
               compact={true}
               selectedUnicode={selectedUnicode}
-              onSelect={selectGlyph} glyphMeta={undefined}            />
+              onSelect={(unicode, char) => selectGlyph(unicode, char, projectId)} glyphMeta={undefined}            />
           </div>
         </div>
       }
@@ -127,13 +138,56 @@ export default function App() {
   const [editorMode,    setEditorMode]    = useState<EditorMode>('edit');
   const [selectedGlyph, setSelectedGlyph] = useState<string | null>(null);
   const [isSaving,      setIsSaving]      = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+  const currentGlyph = useFontStore(state => state.currentGlyph);
+  const isDirty = useFontStore(state => state.isDirty);
+  const markGlyphSaved = useFontStore(state => state.markGlyphSaved);
+  const selectedUnicode = useGlyphSelectionStore(state => state.selectedUnicode);
+  const loadStatus = useGlyphSelectionStore(state => state.loadStatus);
+  const canSave = Boolean(
+    isDirty &&
+    currentGlyph &&
+    loadStatus === 'ready' &&
+    selectedUnicode === currentGlyph.unicode,
+  );
 
-  const backendStatus: BackendStatus = 'connected';
+  const [backendStatus, setBackendStatus] = useState<BackendStatus>('syncing');
+
+  useEffect(() => {
+    let mounted = true;
+    const checkBackend = async () => {
+      const status = await electronAPI.checkBackendStatus();
+      if (mounted) setBackendStatus(status);
+    };
+
+    void checkBackend();
+    const interval = window.setInterval(() => void checkBackend(), 10_000);
+    return () => {
+      mounted = false;
+      window.clearInterval(interval);
+    };
+  }, []);
 
   const handleSave = async () => {
+    const glyph = useFontStore.getState().currentGlyph;
+    if (!glyph) {
+      setSaveMessage('保存するグリフがありません');
+      return;
+    }
+
     setIsSaving(true);
-    await new Promise(r => setTimeout(r, 1200));
-    setIsSaving(false);
+    setSaveMessage('');
+    try {
+      const projectId = useGlyphSelectionStore.getState().selectedProjectId;
+      await electronAPI.saveGlyph(glyph.unicode, glyph, projectId);
+      markGlyphSaved(glyph);
+      setSaveMessage(`U+${glyph.unicode} を保存しました`);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      setSaveMessage(`保存に失敗しました: ${detail}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -147,6 +201,8 @@ export default function App() {
             setEditorMode={setEditorMode}
             isSaving={isSaving}
             handleSave={handleSave}
+            saveMessage={saveMessage}
+            canSave={canSave}
             backendStatus={backendStatus}
           />
         }>

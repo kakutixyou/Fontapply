@@ -90,8 +90,9 @@ function registerFontIpcHandlers() {
     // フロントエンドから呼ばれ、Pythonの /api/glyphs/{unicode} を叩く
     // ══════════════════════════════════════════════════════════════════
     electron_1.ipcMain.handle('font:getGlyphData', function (_event_1, _a) { return __awaiter(_this, [_event_1, _a], void 0, function (_event, _b) {
-        var data, err_1, msg;
+        var data, err_1, msg, query;
         var unicode = _b.unicode;
+        var projectId = _b.projectId;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -99,7 +100,8 @@ function registerFontIpcHandlers() {
                     _c.label = 1;
                 case 1:
                     _c.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, apiFetch("/api/glyphs/".concat(unicode))];
+                    query = projectId === null || projectId === void 0 ? '' : "?project_id=".concat(projectId);
+                    return [4 /*yield*/, apiFetch("/api/glyphs/".concat(encodeURIComponent(unicode)).concat(query))];
                 case 2:
                     data = _c.sent();
                     return [2 /*return*/, data];

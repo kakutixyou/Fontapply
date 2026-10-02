@@ -51,7 +51,7 @@ export default function Dashboard() {
   };
 
   // プロジェクト削除処理
-  const handleDelete = async (projectId: string) => {
+  const handleDelete = async (projectId: number) => {
     try {
       await electronAPI.projects.delete(projectId);
       await loadProjects(); // 削除後に一覧を再取得して画面を更新
@@ -70,8 +70,8 @@ export default function Dashboard() {
           <p>デザイン変換・フォント生成プロジェクトを管理します。</p>
         </div>
         <div className="dashboard-page__actions">
-          <button type="button" onClick={() => navigate('/converter')}>
-            クイック変換
+          <button type="button" disabled title="この機能はまだ準備中です">
+            クイック変換（準備中）
           </button>
           <button type="button" onClick={() => setShowCreate(true)}>
             ➕ 新規プロジェクト

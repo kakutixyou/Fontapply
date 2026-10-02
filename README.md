@@ -51,6 +51,7 @@ python python_backend\main.py
 ## 現在の実装範囲と注意点
 
 - FastAPIは `python_backend/main.py` から起動し、`/health`、プロジェクトCRUD、`/api/glyphs` 系のルートを登録します。ローカルDBは `database/font_studio.db` に作成されます。初回起動時に `database` フォルダーがなくても作成します。
+- グリフ編集画面の「保存」はプロジェクト単位でグリフ形状をSQLiteに保存します。プロジェクトを開かない `/font-studio` の編集は共通領域（project_id=0）に保存されます。既存の共通グリフ保存データは初回起動時に共通領域へ移行されます。DBを削除するとプロジェクトと保存した編集内容も失われるため、定期的にバックアップしてください。
 - FastAPIのfont export、import、analyticsルーターは現在無効化されています。画面に操作があっても、バックエンド側の対応が未完了の機能があります。
 - Electronの `main.ts` は開発時にVite (`localhost:5173`) を表示し、フォントIPCは既定でFastAPI (`127.0.0.1:8000`) を呼び出します。接続先は `FONT_API_BASE_URL` で変更できます。
 - ElectronのプロジェクトIPCやPythonステータスの一部はTODO/仮実装です。Electron画面から使うときは、各ボタンがFastAPIへ接続されているか個別に確認してください。

@@ -34,11 +34,15 @@ export function registerFontIpcHandlers(): void {
   // ══════════════════════════════════════════════════════════════════
   ipcMain.handle(
     'font:getGlyphData',
-    async (_event: IpcMainInvokeEvent, { unicode }: { unicode: string }) => {
+    async (
+      _event: IpcMainInvokeEvent,
+      { unicode, projectId }: { unicode: string; projectId?: number | null },
+    ) => {
       console.log(`[font.ipc] 文字データ取得リクエスト: U+${unicode}`);
       try {
         // Pythonから { glyph: {...}, metrics: {...} } を受け取る
-        const data = await apiFetch(`/api/glyphs/${unicode}`);
+        const query = projectId === null || projectId === undefined ? '' : `?project_id=${projectId}`;
+        const data = await apiFetch(`/api/glyphs/${encodeURIComponent(unicode)}${query}`);
         return data; 
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);

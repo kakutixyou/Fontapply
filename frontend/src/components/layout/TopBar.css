@@ -29,6 +29,29 @@
   gap: var(--spacing-md);
 }
 
+.top-bar-save-button {
+  padding: 7px 16px;
+  color: #fff;
+  background: var(--color-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.top-bar-save-button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.top-bar-save-status {
+  max-width: 320px;
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .window-controls {
   display: flex;
   gap: 8px;
@@ -72,6 +95,11 @@
   }
 
   .window-controls {
+    -webkit-app-region: no-drag;
+  }
+
+  .top-bar-save-button,
+  .top-bar-save-status {
     -webkit-app-region: no-drag;
   }
 

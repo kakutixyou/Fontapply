@@ -6,6 +6,7 @@ import type {
   FontGenerateResponse,
 } from '../types/font';
 import type { CreateProjectInput, ProjectRecord, UpdateProjectInput } from '../types/project';
+import type { GlyphData } from '../components/font/GlyphEditor.types';
 
 declare global {
   interface Window {
@@ -17,10 +18,10 @@ declare global {
       generateFont?: (request: FontGenerateRequest) => Promise<FontGenerateResponse>;
       convertFont?: (request: FontConvertRequest) => Promise<FontConvertResponse>;
       listProjects?: () => Promise<ProjectRecord[]>;
-      getProject?: (projectId: string) => Promise<ProjectRecord>;
+      getProject?: (projectId: number | string) => Promise<ProjectRecord>;
       createProject?: (input: CreateProjectInput) => Promise<ProjectRecord>;
-      updateProject?: (projectId: string, input: UpdateProjectInput) => Promise<ProjectRecord>;
-      deleteProject?: (projectId: string) => Promise<void>;
+      updateProject?: (projectId: number | string, input: UpdateProjectInput) => Promise<ProjectRecord>;
+      deleteProject?: (projectId: number | string) => Promise<void>;
     };
   }
 }
@@ -61,6 +62,24 @@ function downloadTextFile(fileName: string, content: string): void {
 }
 
 export const electronAPI = {
+  saveGlyph: (unicode: string, glyph: GlyphData, projectId: number | null = null): Promise<{ glyph: GlyphData }> =>
+    requestJson<{ glyph: GlyphData }>(
+      `${FONT_API_BASE_URL}/api/glyphs/${encodeURIComponent(unicode)}${projectId === null ? '' : `?project_id=${projectId}`}`,
+      {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(glyph),
+      },
+    ),
+  checkBackendStatus: async (): Promise<'connected' | 'disconnected' | 'error'> => {
+    try {
+      await requestJson<{ status: string }>(`${API_BASE_URL}/health`);
+      return 'connected';
+    } catch (error) {
+      if (error instanceof TypeError) return 'disconnected';
+      return 'error';
+    }
+  },
   upload: (file: File, projectId?: string): Promise<UploadResponse> => {
     if (window.designAPI?.uploadDesign) {
       return window.designAPI.uploadDesign(file, projectId);
@@ -124,7 +143,7 @@ export const electronAPI = {
       }
       return requestJson<ProjectRecord[]>(`${API_BASE_URL}/projects`);
     },
-    get: (projectId: string): Promise<ProjectRecord> => {
+    get: (projectId: number | string): Promise<ProjectRecord> => {
       if (window.designAPI?.getProject) {
         return window.designAPI.getProject(projectId);
       }
@@ -140,7 +159,7 @@ export const electronAPI = {
         body: JSON.stringify(input),
       });
     },
-    update: (projectId: string, input: UpdateProjectInput): Promise<ProjectRecord> => {
+    update: (projectId: number | string, input: UpdateProjectInput): Promise<ProjectRecord> => {
       if (window.designAPI?.updateProject) {
         return window.designAPI.updateProject(projectId, input);
       }
@@ -150,7 +169,7 @@ export const electronAPI = {
         body: JSON.stringify(input),
       });
     },
-    delete: async (projectId: string): Promise<void> => {
+    delete: async (projectId: number | string): Promise<void> => {
       if (window.designAPI?.deleteProject) {
         return window.designAPI.deleteProject(projectId);
       }

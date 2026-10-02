@@ -14,8 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # === 今回の大動脈で使うルーター ===
-from python_backend.api.routes_font_generator import router as font_generator_router
-from python_backend.api.routes_projects import router as projects_router
+from python_backend.api.routes_font_generator import init_glyph_overrides_table, router as font_generator_router
+from python_backend.api.routes_projects import init_projects_table, router as projects_router
 
 # === 古い/壊れているルーターは一時的に無効化（エラー回避のため） ===
 # from python_backend.api.routes_font_export import router as font_export_router
@@ -56,6 +56,8 @@ def _run_migrations() -> None:
 async def lifespan(app: FastAPI):
     # --- 起動時の処理 (startup) ---
     _run_migrations()
+    init_projects_table()
+    init_glyph_overrides_table()
     
     # ※古いキャッシュクリーンアップ処理は一旦停止しています
     yield 

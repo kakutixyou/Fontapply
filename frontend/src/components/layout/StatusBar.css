@@ -52,6 +52,14 @@
       border-radius: 50%;
     }
   }
+
+  &.error {
+    color: var(--color-error);
+  }
+
+  &.syncing {
+    color: var(--color-warning);
+  }
 }
 
 @keyframes pulse-connected {

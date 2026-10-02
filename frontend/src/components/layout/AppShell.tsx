@@ -17,8 +17,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './AppShell.css';
 
-import { Outlet } from 'react-router-dom';
-import Sidebar from './Sidebar';
 interface AppShellProps {
   topBar: React.ReactNode;
   sidebar: React.ReactNode;
@@ -175,10 +173,6 @@ export const AppShell: React.FC<AppShellProps> = ({
 
       {/* StatusBar */}
       <div className="wf-shell__statusbar">{statusBar}</div>
-            <main className="wf-main-content">
-        {/* ▼ ここが重要！ URLに応じて Dashboard や FontStudio がここに表示されます ▼ */}
-        <Outlet />
-      </main>
     </div>
   );
 };
